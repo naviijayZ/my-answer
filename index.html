@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Answer ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700&family=Poppins:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', 'Noto Sans Sinhala', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+            transition: opacity 0.5s ease;
+        }
+
+        .options-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        .option-box {
+            background: #ffffff;
+            border: 2px solid #5a67d8;
+            color: #5a67d8;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-family: inherit;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-weight: 600;
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center;
+            box-sizing: border-box;
+            opacity: 1;
+            overflow: hidden; /* Important for when height shrinks */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-box.highlight {
+            background: #ff4757;
+            color: white;
+            border-color: #ff4757;
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
+            margin-top: 20px;
+            z-index: 20;
+            padding: 20px 25px;
+            font-size: 18px;
+        }
+
+        #finalMessage {
+            opacity: 0;
+            color: #ff4757;
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 30px;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: none;
+        }
+
+        #finalMessage.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <h1 id="titleText">ඔයා එදා කතා කරලා option 4ක් දුන්නනේ.. ඉතින් මං ඒ ගැන හිතලා බැලුවා... 🤔</h1>
+        <div class="options-wrapper" id="optionsWrapper">
+            <div class="option-box" id="opt1">1) Physical හම්බෙනකන් affair එක තියන් ඉමු.</div>
+            <div class="option-box" id="opt2">2) මේ සෙම් එක ඉවර වෙනකන් තියන් ඉන්න.</div>
+            <div class="option-box" id="opt3">3) කැම්පස් එකේ ඉන්නකන් තියන් ඉන්න.</div>
+            <div class="option-box" id="opt4">4) ගෙදරින් ප්‍රශ්නයක් වෙනකන් කරගෙන යන්න.</div>
+        </div>
+        
+        <div id="finalMessage">මේක තමයි මගේ උත්තරේ! ❤️</div>
+    </div>
+
+    <script>
+        // Start animation after a short delay
+        setTimeout(() => {
+            const opt1 = document.getElementById('opt1');
+            const opt2 = document.getElementById('opt2');
+            const opt3 = document.getElementById('opt3');
+            const opt4 = document.getElementById('opt4');
+            const titleText = document.getElementById('titleText');
+            const finalMessage = document.getElementById('finalMessage');
+
+            // Helper function to animate deletion
+            function deleteOption(element, delay) {
+                setTimeout(() => {
+                    const height = element.offsetHeight;
+                    element.style.height = height + 'px';
+                    
+                    // Force reflow
+                    void element.offsetHeight;
+                    
+                    // Apply delete animations
+                    element.style.transform = 'scale(0.7) translateX(50px)';
+                    element.style.opacity = '0';
+                    element.style.paddingTop = '0';
+                    element.style.paddingBottom = '0';
+                    element.style.marginTop = '0';
+                    element.style.marginBottom = '0';
+                    element.style.borderWidth = '0';
+                    element.style.height = '0';
+                    
+                }, delay);
+            }
+
+            // Sequence Timing
+            
+            // Wait 3 seconds so the user can read the options initially, then delete option 4
+            deleteOption(opt4, 3000); 
+            
+            // Delete option 3 after 5 seconds
+            deleteOption(opt3, 5000); 
+            
+            // Delete option 1 after 7 seconds
+            deleteOption(opt1, 7000); 
+
+            // Highlight option 2 and show final message after 9 seconds
+            setTimeout(() => {
+                // Fade out top title
+                titleText.style.opacity = '0';
+                
+                setTimeout(() => {
+                    titleText.style.display = 'none';
+                    finalMessage.style.display = 'block';
+                    
+                    // Force reflow
+                    void finalMessage.offsetWidth;
+                    
+                    // Pop up option 2 and show final text
+                    opt2.classList.add('highlight');
+                    finalMessage.classList.add('show');
+                }, 500); // Wait for title to fade out completely
+            }, 9000);
+
+        }, 1000); // Initial 1s delay before starting timelines
+    </script>
+</body>
+</html>
