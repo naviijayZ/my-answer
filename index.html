@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Time! 😉</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600&family=Poppins:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', 'Noto Sans Sinhala', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .options-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+        }
+
+        .btn {
+            background: #ffffff;
+            border: 2px solid #5a67d8;
+            color: #5a67d8;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(90, 103, 216, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Buttons that run away normally transition position */
+        .btn.runaway {
+            position: relative;
+            z-index: 50;
+        }
+
+        #successModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            max-width: 90%;
+        }
+
+        .modal-content h2 {
+            color: #48bb78;
+            margin-top: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .modal-content p {
+            font-size: 18px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>හරි, දැන් ඉතින් තීරණයක් ගන්න.. 🤔</h1>
+        <div class="options-wrapper" id="optionsWrapper">
+            <button class="btn" onclick="selectOption(1)">1) Physical හම්බෙනකන් affair එක තියන් ඉමු.</button>
+            <button class="btn" onclick="selectOption(2)">2) මේ සෙම් එක ඉවර වෙනකන් තියන් ඉන්න.</button>
+            <button class="btn runaway" id="btn3">3) කැම්පස් එකේ ඉන්නකන් තියන් ඉන්න.</button>
+            <button class="btn runaway" id="btn4" style="font-size: 15px;">4) ගෙදරින් ප්‍රශ්නයක් වෙනකන් කරගෙන යන්න.</button>
+        </div>
+    </div>
+
+    <div id="successModal">
+        <div class="modal-content">
+            <h2>Perfect Choice! ❤️</h2>
+            <p id="successMessage"></p>
+            <button class="btn" onclick="location.reload()" style="max-width: 200px;">නැවත මුලට</button>
+        </div>
+    </div>
+
+    <script>
+        const runaways = document.querySelectorAll('.runaway');
+        const padding = 30;
+
+        runaways.forEach(btn => {
+            const moveButton = function(e) {
+                if (e.type === 'touchstart') {
+                    e.preventDefault(); // Prevent accidental clicks on mobile
+                }
+                
+                // Switch to fixed position relative to viewport on first interaction
+                if (this.style.position !== 'fixed') {
+                    const rect = this.getBoundingClientRect();
+                    this.style.width = rect.width + 'px';
+                    this.style.height = rect.height + 'px';
+                    this.style.position = 'fixed';
+                    // Need to reset margins as fixed position takes it out of flow
+                    this.style.margin = '0';
+                    this.style.left = rect.left + 'px';
+                    this.style.top = rect.top + 'px';
+                }
+
+                // Get viewport dimensions
+                const maxX = window.innerWidth - this.offsetWidth - padding;
+                const maxY = window.innerHeight - this.offsetHeight - padding;
+
+                // Move slightly faster via transition
+                this.style.transition = 'left 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), top 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+                // Random new position
+                const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+                // Calculate current cursor or touch position to move AWAY from it
+                let pointerX = window.innerWidth / 2;
+                let pointerY = window.innerHeight / 2;
+                
+                if (e.type === 'mousemove') {
+                    pointerX = e.clientX;
+                    pointerY = e.clientY;
+                } else if (e.type === 'touchstart') {
+                    pointerX = e.touches[0].clientX;
+                    pointerY = e.touches[0].clientY;
+                }
+
+                // Improved logic: Move to a random position but ensure it's not too close to the cursor
+                let newX, newY;
+                let distance = 0;
+                let attempts = 0;
+                
+                do {
+                    newX = Math.max(padding, Math.floor(Math.random() * maxX));
+                    newY = Math.max(padding, Math.floor(Math.random() * maxY));
+                    distance = Math.sqrt(Math.pow(newX - pointerX, 2) + Math.pow(newY - pointerY, 2));
+                    attempts++;
+                } while (distance < 200 && attempts < 10);
+
+                this.style.left = newX + 'px';
+                this.style.top = newY + 'px';
+            };
+
+            btn.addEventListener('mousemove', moveButton);
+            btn.addEventListener('touchstart', moveButton);
+            
+            // Even if they somehow click it
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert("Nice try! But you can't select this one 😂");
+                moveButton(e);
+            });
+        });
+
+        function selectOption(opt) {
+            const modal = document.getElementById('successModal');
+            const msg = document.getElementById('successMessage');
+            
+            if (opt === 1) {
+                msg.innerText = "Physical හම්බෙනකන් එහෙනම් ඉමු! 😍";
+            } else if (opt === 2) {
+                msg.innerText = "මේ සෙම් එක ඉවර වෙනකන් එහෙනම්! 😉";
+            }
+            
+            modal.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
